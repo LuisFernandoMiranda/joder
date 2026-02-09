@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Reloj Flip</title>
 <style>
   body {
@@ -12,11 +13,15 @@
     align-items: center;
     min-height: 100vh;
     margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
   }
 
   .clock-container {
     display: flex;
-    gap: 20px;
+    gap: 15px;
+    flex-wrap: nowrap;
+    align-items: center;
   }
 
   .flip-card {
@@ -29,7 +34,8 @@
     flex-direction: column;
     align-items: center;
     position: relative;
-    min-width: 140px;
+    min-width: 120px;
+    flex-shrink: 0;
   }
 
   .flip-card::before {
@@ -59,6 +65,7 @@
     margin-top: 15px;
     text-transform: uppercase;
     letter-spacing: 1px;
+    white-space: nowrap;
   }
 
   .separator {
@@ -68,6 +75,7 @@
     align-self: center;
     margin: 0 -5px;
     padding-bottom: 30px;
+    flex-shrink: 0;
   }
 
   @keyframes flip {
@@ -84,6 +92,89 @@
 
   .flip-animation {
     animation: flip 0.6s ease-in-out;
+  }
+
+  /* Responsive para tablets */
+  @media (max-width: 768px) {
+    .flip-card {
+      min-width: 100px;
+      padding: 25px 20px 15px;
+    }
+
+    .number {
+      font-size: 68px;
+      letter-spacing: -3px;
+    }
+
+    .label {
+      font-size: 11px;
+      margin-top: 12px;
+    }
+
+    .separator {
+      font-size: 52px;
+      padding-bottom: 25px;
+    }
+
+    .clock-container {
+      gap: 12px;
+    }
+  }
+
+  /* Responsive para móviles */
+  @media (max-width: 480px) {
+    .flip-card {
+      min-width: 80px;
+      padding: 20px 15px 12px;
+    }
+
+    .number {
+      font-size: 52px;
+      letter-spacing: -2px;
+    }
+
+    .label {
+      font-size: 9px;
+      margin-top: 10px;
+      letter-spacing: 0.5px;
+    }
+
+    .separator {
+      font-size: 40px;
+      padding-bottom: 20px;
+      margin: 0 -8px;
+    }
+
+    .clock-container {
+      gap: 8px;
+    }
+  }
+
+  /* Responsive para pantallas muy pequeñas */
+  @media (max-width: 360px) {
+    .flip-card {
+      min-width: 70px;
+      padding: 18px 12px 10px;
+    }
+
+    .number {
+      font-size: 44px;
+      letter-spacing: -1px;
+    }
+
+    .label {
+      font-size: 8px;
+      margin-top: 8px;
+    }
+
+    .separator {
+      font-size: 36px;
+      padding-bottom: 18px;
+    }
+
+    .clock-container {
+      gap: 6px;
+    }
   }
 </style>
 </head>
