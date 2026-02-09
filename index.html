@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Calendario</title>
+<style>
+  body {
+    font-family: Inter, system-ui, sans-serif;
+    background: #FFFFFF;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .calendar {
+    width: 280px;
+    background-color: #B3B3B3;
+    border: 1px solid #000000;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(180deg, #C0C0C0 0%, #B3B3B3 100%);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    font-weight: 500;   
+    font-size: 16px;
+    color: #111111;
+    padding: 12px;
+    border-bottom: 1px solid #000000;
+    border-radius: 8px 8px 0 0;
+  }
+
+  .nav {
+    cursor: pointer;
+    user-select: none;
+    padding: 4px 10px;
+    color: #111111;
+    transition: background 0.2s;
+    border-radius: 4px;
+  }
+
+  .nav:hover {
+    background: rgba(0, 0, 0, 0.1);
+  }
+
+  /* WEEKDAYS */
+  .weekdays, .days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-size: 13px;
+    padding: 0 6px;
+  }
+
+  .weekdays div {
+    color: #111111;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+
+  /* DAYS */
+  .days {
+    padding-bottom: 8px;
+  }
+
+  .days div {
+    padding: 10px 0;
+    margin: 2px;
+    border-radius: 7px;
+    color: #4A4A4A;
+    background: linear-gradient(135deg, #D9D9D9 0%, #CACACA 100%);
+    border: 1px solid #A0A0A0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .days div:hover:not(.prev-month):not(.next-month) {
+    background: linear-gradient(135deg, #E0E0E0 0%, #D0D0D0 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.18);
+  }
+
+  /* Días del mes anterior y siguiente */
+  .prev-month, .next-month {
+    color: #999999 !important;
+    background: linear-gradient(135deg, #C5C5C5 0%, #B8B8B8 100%) !important;
+    border: 1px solid #959595 !important;
+    opacity: 0.6;
+    cursor: default !important;
+  }
+
+  .today {
+    background: linear-gradient(135deg, #2A2A2A 0%, #000000 100%) !important;
+    color: #FFFFFF !important;
+    font-weight: 600;
+    border: 1px solid #000000 !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3) !important;
+    opacity: 1 !important;
+  }
+
+  .today:hover {
+    background: linear-gradient(135deg, #333333 0%, #0A0A0A 100%) !important;
+  }
+</style>
+</head>
+<body>
+
+<div class="calendar">
+  <div class="header">
+    <span class="nav" id="prev">‹</span>
+    <span id="monthYear"></span>
+    <span class="nav" id="next">›</span>
+  </div>
+
+  <div class="weekdays">
+    <div>Lu</div><div>Ma</div><div>Mi</div><div>Ju</div>
+    <div>Vi</div><div>Sá</div><div>Do</div>
+  </div>
+
+  <div class="days" id="days"></div>
+</div>
+
+<script>
+  const today = new Date();
+  let currentMonth = today.getMonth();
+  let currentYear = today.getFullYear();
+
+  const monthYear = document.getElementById("monthYear");
+  const daysContainer = document.getElementById("days");
+
+  const months = [
+    "Enero","Febrero","Marzo","Abril","Mayo","Junio",
+    "Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"
+  ];
+
+  function renderCalendar(month, year) {
+    daysContainer.innerHTML = "";
+    monthYear.textContent = `${months[month]} de ${year}`;
+
+    const firstDay = new Date(year, month, 1);
+    const startDay = (firstDay.getDay() + 6) % 7;
+    const totalDays = new Date(year, month + 1, 0).getDate();
+    
+    // Obtener días del mes anterior
+    const prevMonthDays = new Date(year, month, 0).getDate();
+
+    // Agregar días del mes anterior
+    for (let i = startDay - 1; i >= 0; i--) {
+      const dayDiv = document.createElement("div");
+      dayDiv.textContent = prevMonthDays - i;
+      dayDiv.classList.add("prev-month");
+      daysContainer.appendChild(dayDiv);
+    }
+
+    // Agregar días del mes actual
+    for (let day = 1; day <= totalDays; day++) {
+      const dayDiv = document.createElement("div");
+      dayDiv.textContent = day;
+
+      if (
+        day === today.getDate() &&
+        month === today.getMonth() &&
+        year === today.getFullYear()
+      ) {
+        dayDiv.classList.add("today");
+      }
+
+      daysContainer.appendChild(dayDiv);
+    }
+
+    // Agregar días del mes siguiente para completar la cuadrícula
+    const totalCells = daysContainer.children.length;
+    const remainingCells = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+    
+    for (let day = 1; day <= remainingCells; day++) {
+      const dayDiv = document.createElement("div");
+      dayDiv.textContent = day;
+      dayDiv.classList.add("next-month");
+      daysContainer.appendChild(dayDiv);
+    }
+  }
+
+  document.getElementById("prev").onclick = () => {
+    currentMonth--;
+    if (currentMonth < 0) {
+      currentMonth = 11;
+      currentYear--;
+    }
+    renderCalendar(currentMonth, currentYear);
+  };
+
+  document.getElementById("next").onclick = () => {
+    currentMonth++;
+    if (currentMonth > 11) {
+      currentMonth = 0;
+      currentYear++;
+    }
+    renderCalendar(currentMonth, currentYear);
+  };
+
+  renderCalendar(currentMonth, currentYear);
+</script>
+
+</body>
+</html>
