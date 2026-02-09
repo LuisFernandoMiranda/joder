@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Reloj Flip</title>
+<style>
+  body {
+    font-family: Inter, system-ui, sans-serif;
+    background: #FFFFFF;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+  }
+
+  .clock-container {
+    display: flex;
+    gap: 20px;
+  }
+
+  .flip-card {
+    background: linear-gradient(135deg, #D9D9D9 0%, #CACACA 100%);
+    border: 1px solid #A0A0A0;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 30px 25px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    min-width: 140px;
+  }
+
+  .flip-card::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #A0A0A0 20%, #A0A0A0 80%, transparent);
+    z-index: 2;
+  }
+
+  .number {
+    font-size: 84px;
+    font-weight: 700;
+    color: #2A2A2A;
+    line-height: 1;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    letter-spacing: -4px;
+  }
+
+  .label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #111111;
+    margin-top: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .separator {
+    font-size: 64px;
+    font-weight: 700;
+    color: #2A2A2A;
+    align-self: center;
+    margin: 0 -5px;
+    padding-bottom: 30px;
+  }
+
+  @keyframes flip {
+    0% {
+      transform: rotateX(0deg);
+    }
+    50% {
+      transform: rotateX(-90deg);
+    }
+    100% {
+      transform: rotateX(0deg);
+    }
+  }
+
+  .flip-animation {
+    animation: flip 0.6s ease-in-out;
+  }
+</style>
+</head>
+<body>
+
+<div class="clock-container">
+  <div class="flip-card">
+    <div class="number" id="hours">00</div>
+    <div class="label" id="period">AM</div>
+  </div>
+
+  <div class="separator">:</div>
+
+  <div class="flip-card">
+    <div class="number" id="minutes">00</div>
+    <div class="label" id="day">MONDAY</div>
+  </div>
+</div>
+
+<script>
+  const hoursElement = document.getElementById('hours');
+  const minutesElement = document.getElementById('minutes');
+  const periodElement = document.getElementById('period');
+  const dayElement = document.getElementById('day');
+
+  const days = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+
+  let lastMinute = -1;
+  let lastHour = -1;
+
+  function updateClock() {
+    const now = new Date();
+    let hours = now.getHours();
+    const minutes = now.getMinutes();
+    const dayIndex = now.getDay();
+
+    // Determinar AM/PM
+    const period = hours >= 12 ? 'PM' : 'AM';
+    
+    // Convertir a formato 12 horas
+    hours = hours % 12;
+    hours = hours ? hours : 12; // Si es 0, mostrar 12
+
+    // Formatear con ceros a la izquierda
+    const hoursFormatted = String(hours).padStart(2, '0');
+    const minutesFormatted = String(minutes).padStart(2, '0');
+
+    // Actualizar minutos con animación
+    if (minutes !== lastMinute) {
+      minutesElement.classList.add('flip-animation');
+      setTimeout(() => {
+        minutesElement.textContent = minutesFormatted;
+        minutesElement.classList.remove('flip-animation');
+      }, 300);
+      lastMinute = minutes;
+    }
+
+    // Actualizar horas con animación
+    if (hours !== lastHour) {
+      hoursElement.classList.add('flip-animation');
+      setTimeout(() => {
+        hoursElement.textContent = hoursFormatted;
+        hoursElement.classList.remove('flip-animation');
+      }, 300);
+      lastHour = hours;
+    }
+
+    // Actualizar período y día
+    periodElement.textContent = period;
+    dayElement.textContent = days[dayIndex];
+  }
+
+  // Actualizar cada segundo
+  updateClock();
+  setInterval(updateClock, 1000);
+</script>
+
+</body>
+</html>
